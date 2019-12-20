@@ -71,4 +71,27 @@ describe('app routes', () => {
         });
       });
   });
+
+  it('can verify if a user is logged in', async() => {
+    const user = await User.create({
+      email: 'willow@willow.com',
+      password: 'TREATS'
+    });
+
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({ email: 'willow@willow.com', password: 'TREATS' });
+
+    return agent
+      .get('/api/v1/auth/verify')
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: user.id,
+          email: 'willow@willow.com',
+          __v: 0
+        });
+      });
+  });
 });
